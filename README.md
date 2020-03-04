@@ -1,5 +1,5 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![NSF-XXXXXXX](https://img.shields.io/badge/NSF-XXXXXXX-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=XXXXXXX) [![NSF-XXXXXXX](https://img.shields.io/badge/NSF-XXXXXXX-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=XXXXXXX)
+[![NSF-1928366](https://img.shields.io/badge/NSF-1928366-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1928366)
 
 # Throughput Re3Data Github Scraper
 
@@ -34,7 +34,7 @@ This project is developed using (Python? R?).  It runs on a Windows system (?). 
 
 ### Data Requirements
 
-The project pulls data from (?).
+The project pulls data from Re3Data and GitHub using the GitHub API and Re3Data as linked through the Throughput Database.
 
 ### Key Outputs
 
