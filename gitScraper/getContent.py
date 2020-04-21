@@ -10,14 +10,14 @@ def getContent(g, searchString):
 
     Returns
     -------
-    type
+    ContentFile
         Description of returned object.
 
     """
     i = 0
     while True:
         try:
-            content_files = g.search_code(query=searchString)
+            content_files = g.search_code(query=searchString, highlight=True)
             hitRepos = content_files.totalCount
             print("   Returning " + str(content_files.totalCount) + " results.")
             break
@@ -30,4 +30,4 @@ def getContent(g, searchString):
             if i > 5:
                 raise RuntimeError("Could not connect to GitHub.")
 
-  return content_files
+    return content_files
