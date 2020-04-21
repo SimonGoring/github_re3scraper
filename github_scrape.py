@@ -18,12 +18,30 @@ import re
 import time
 import csv
 import sys
+import getContent from getContent
 
-with open('connect_remote.json') as f:
+with open('.gitignore') as gi:
+    good = False
+    # This simply checks to see if you have a connection string in your repo.
+    # I use `strip` to remove whitespace/newlines.
+    for line in gi:
+        if line.strip() == "connect_remote.json":
+            good = True
+            break
+
+if good is False:
+    print("The connect_remote.json file is not in your .gitignore file. \
+           Please add it!")
+
+with open('./connect_remote.json') as f:
     data = json.load(f)
 
-print("Connecting to the remote graph. . .")
-graph = Graph(**data)
+with open('./gh.token') as f:
+    gh_token = f.read().splitlines()
+
+g = Github(gh_token[2])
+
+graph = Graph(**data[1])
 
 tx = graph.begin()
 
@@ -38,11 +56,6 @@ cypher = """MATCH (:TYPE {type:"schema:CodeRepository"})-[:isType]-(cr:OBJECT)-[
 
 print("Matching existing repositories")
 dbs = graph.run(cypher).data()
-
-with open('gh.token') as f:
-    token = json.load(f)
-
-g = Github(token['token'])
 
 gitadd = open('cql/github_linker.cql', mode="r")
 git_cql = gitadd.read()
@@ -65,34 +78,7 @@ for db in dbs:
     if rate_limit.search.remaining < 2:
         print("   Rate limit reached, pausing for 10 seconds.")
         time.sleep(10)
-
-    hitexcept = True
-    pausetime = 30
-    while hitexcept:
-        try:
-            content_files = g.search_code(query=searchString)
-            hitRepos = content_files.totalCount
-            print("   Returning " + str(content_files.totalCount) + " results.")
-            hitexcept = False
-        except Exception as ex:
-            f = open('data/skipped_re3.txt', 'a')
-            f.write("'" + searchString + "'" + " " + str(ex) + "\n")
-            f.close()
-
-            print("Sleeping for " + str(pausetime) + " seconds")
-            time.sleep(pausetime)
-            pausetime = pausetime + 30
-
-    if hitRepos == 1000:
-        print("   **** There are more than 1000 results returned. ***")
-        f = open('data/skipped_re3.txt', 'a')
-        f.write(searchString + " over 1k results\r\n")
-        f.close()
-
-    if hitRepos == 0:
-        next
-
-    print('Pulling content')
+    content_files = getContent.getContent(g, searchString)
 
     for content in content_files:
         time.sleep(1)
