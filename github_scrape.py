@@ -55,7 +55,7 @@ tx = graph.begin()
 
 # The use of the >>>!!!<<< is used to show deprecation apparently.
 # This returns 2255 research databases from re3data.
-
+#  Here we're matching repos that have not been matched yet.
 cypher = """MATCH (:TYPE {type:"schema:CodeRepository"})-[:isType]-(cr:OBJECT)-[:Target]-(:ANNOTATION)-[tar:Target]-(ot:OBJECT)-[:isType]-(:TYPE {type:"schema:DataCatalog"})
     WITH COLLECT(DISTINCT ot.name) AS goodies
     MATCH (ob:OBJECT)-[:isType]-(:TYPE {type:"schema:DataCatalog"})
