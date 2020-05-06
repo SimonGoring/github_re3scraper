@@ -12,7 +12,6 @@ from py2neo import Graph
 from json import loads, load
 import random
 import re
-from gitScraper.callquery import callquery
 from gitScraper.tryCatchQuery import tryCatchQuery
 
 
@@ -66,7 +65,6 @@ print("Matching existing repositories")
 dbs = graph.run(cypher).data()
 
 random.shuffle(dbs)
-repositories = set()
 
 for db in dbs:
     print("Running graphs for", db['ob']['name'])
@@ -78,6 +76,8 @@ for db in dbs:
         searchString = '"' + db['ob']['name'] + '" "' + url + '" in:file'
     content_files = list(tryCatchQuery(g, db['ob']['name'], searchString))
     if len(content_files) > 0:
+        i = 0
+        total = len(content_files)
         for cf in content_files:
             cf = loads(cf)
             repElem = {'ghid': cf.get('id'),
@@ -87,15 +87,16 @@ for db in dbs:
                        'otid': db['ob']['id']}
             repElem = emptyNone(repElem)
             connect = """MATCH (oba:OBJECT)
-                     WHERE oba.id = $ghid
-                     MATCH (obb:OBJECT)
-                     WHERE obb.id = $otid
-                     WITH oba, obb
-                     MATCH (oba)<-[:Target]-(a:ANNOTATION)-[:Target]->(obb)
-                     RETURN a
-                     """
+                         WHERE oba.id = $ghid
+                         MATCH (obb:OBJECT)
+                         WHERE obb.id = $otid
+                         WITH oba, obb
+                         MATCH (oba)<-[:Target]-(a:ANNOTATION)-[:Target]->(obb)
+                         RETURN a
+                         """
             test = graph.run(connect, repElem)
             if len(test.data()) == 0:
-                print("    * Adding repository to the graph.")
+                i = i + 1
+                print("    * Adding repository " + repElem['ghname'] + " to the graph.")
                 with open('cql/github_linker.cql', mode="r") as gitadd:
-                    graph.run(gitadd.read(), repElem)
+                    silent = graph.run(gitadd.read(), repElem)
