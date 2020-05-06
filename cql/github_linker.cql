@@ -2,11 +2,11 @@ MATCH (ty:TYPE {type: "schema:CodeRepository"})
 MATCH (tyt:TYPE {type: "TextualBody"})
 MATCH (mv:MOTIVATION {term: "linking"})
 MATCH (aty:AGENTTYPE {type:"Person"})
-MERGE (ob:OBJECT {id: toInteger($ghid),
+CREATE (ob:OBJECT {id: toInteger($ghid),
                   url: $ghurl,
                   description: $ghdescription,
-                  name: $ghname})
-ON CREATE SET ob.created = timestamp()
+                  name: $ghname,
+                  created: timestamp()})
 WITH ty, tyt, ob, mv, aty
 MERGE (ty)<-[:isType]-(ob)
 CREATE (ob)<-[:Target]-(a:ANNOTATION { created: timestamp() })
