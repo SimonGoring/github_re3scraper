@@ -15,8 +15,8 @@ def tryCatchQuery(g, parent, query):
                   + ' with library call.')
             sleep(120)
             continue
-        except:
-            print("Unexpected error:", sys.exc_info()[0])
+        except Exception as inst:
+            print("Unexpected error:", str(inst))
             print('Oops, broke for ' + parent
                   + ' with library call.')
             sleep(120)
